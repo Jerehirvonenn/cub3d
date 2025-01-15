@@ -1,5 +1,4 @@
 #include "parsing.h"
-#include <string.h> //CHANGE TO FT FUNCTIONS!!!
 
 bool false_message(char *str)
 {
@@ -105,7 +104,7 @@ void check_and_set_texture(char **texture, const char *value, t_parsing *pars)
 		ft_putstr_fd("Error\nDuplicate texture assignment\n", 2);
 		parse_clean_exit(pars, 1);
 	}
-	*texture = strdup(value);
+	*texture = ft_strdup(value);
 	if (!*texture)
 	{
 		ft_putstr_fd("Error\nMalloc failure\n", 2);
@@ -120,15 +119,15 @@ void check_str(char *str, t_parsing *pars)
 	i = 0;
 	while (str[i] == ' ')
 		i++;
-	if (strlen(str + i) == 0)
+	if (ft_strlen(str + i) == 0)
 		return;
-	if (strncmp(str + i, "NO ", 3) == 0)
+	if (ft_strncmp(str + i, "NO ", 3) == 0)
 		check_and_set_texture(&pars->north, str + i + 3, pars);
-	else if (strncmp(str + i, "SO ", 3) == 0)
+	else if (ft_strncmp(str + i, "SO ", 3) == 0)
 		check_and_set_texture(&pars->south, str + i + 3, pars);
-	else if (strncmp(str + i, "WE ", 3) == 0)
+	else if (ft_strncmp(str + i, "WE ", 3) == 0)
 		check_and_set_texture(&pars->west, str + i + 3, pars);
-	else if (strncmp(str + i, "EA ", 3) == 0)
+	else if (ft_strncmp(str + i, "EA ", 3) == 0)
 		check_and_set_texture(&pars->east, str + i + 3, pars);
 	else if (str[i] == 'F' && str[i + 1] == ' ')
 		parse_color(str + i + 2, pars->floor, pars);
@@ -232,7 +231,7 @@ bool validate_map(t_parsing *pars, char **map)
 		printf("%s\n", norm_map[i]);
 	return (true);
 }
-
+/*
 int main(int ac, char **av)
 {
 	if (ac < 2)
@@ -258,4 +257,4 @@ int main(int ac, char **av)
 	print_parsing(&pars);
 	if (!validate_map(&pars, av + pars.map_start))
 		printf("Map validation Failed\n");
-}
+}*/
