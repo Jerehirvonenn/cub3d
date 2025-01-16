@@ -18,10 +18,10 @@ void print_parsing(const t_parsing *parsing)
 	printf("Ceiling Color: %d, %d, %d\n", parsing->ceiling[0],
 		   parsing->ceiling[1], parsing->ceiling[2]);
 
-	printf("Map:\n");
-	if (parsing->map)
-		for (int i = 0; parsing->map[i]; i++)
-			printf("%s\n", parsing->map[i]);
+	printf("Norm_Map:\n");
+	if (parsing->norm_map)
+		for (int i = 0; parsing->norm_map[i]; i++)
+			printf("%s\n", parsing->norm_map[i]);
 	else
 		printf("Map is not set.\n");
 }

@@ -20,6 +20,7 @@ typedef struct s_parsing
 	char  *west;
 	char  *east;
 	char **map;
+    char **norm_map;
 	int	   fd;
 	int	   floor[3];
 	int	   ceiling[3];
@@ -28,11 +29,11 @@ typedef struct s_parsing
 
 int	   count_rows(char **map);
 int	   find_longest(char **map);
-char **normalize_map(char **map);
-bool   validate_characters(char **map);
+char **normalize_map(t_parsing *pars, char **map);
+bool   validate_characters(t_parsing *pars, char **map);
 bool   flood_fill(char **map, int x, int y, int rows, int col);
 bool   check_walls(char **norm_map, int rows, int col);
-bool   validate_map(t_parsing *pars, char **map);
+void    validate_map(t_parsing *pars, char **map);
 
 //parse_file
 void validate_file(t_parsing *pars);
@@ -46,5 +47,5 @@ void parse_clean_exit(t_parsing *parse, int exit_code, char *str);
 
 //debug
 void print_parsing(const t_parsing *parsing);
-void free_array(char **array);
+void free_array(char ***array);
 #endif

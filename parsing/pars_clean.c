@@ -38,6 +38,13 @@ void parse_clean_exit(t_parsing *parse, int exit_code, char *str)
 		free(parse->map);
 		parse->map = NULL;
 	}
+	if (parse->norm_map)
+	{
+		for (int i = 0; parse->norm_map[i]; i++)
+			free_and_null(&parse->norm_map[i]);
+		free(parse->norm_map);
+		parse->map = NULL;
+	}
 	if (str)
 		ft_putstr_fd(str, 2);
 	if (exit_code != 0)

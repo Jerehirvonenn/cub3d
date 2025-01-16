@@ -35,7 +35,7 @@ int find_longest(char **map)
 	return (longest);
 }
 
-char **normalize_map(char **map)
+char **normalize_map(t_parsing *pars, char **map)
 {
 	int	   i;
 	int	   j;
@@ -47,14 +47,17 @@ char **normalize_map(char **map)
 	longest = find_longest(map);
 	norm_map = (char **)malloc(sizeof(char *) * (rows + 1));
 	if (!norm_map)
-		exit(1); // need protection
+        parse_clean_exit(pars, 1, "Error\nMalloc failure\n");
 	norm_map[rows] = NULL;
 	i = 0;
 	while (i < rows)
 	{
 		norm_map[i] = (char *)malloc(sizeof(char) * (longest + 1));
 		if (!norm_map[i])
-			exit(1); // need protection
+        {
+            free(norm_map);
+            parse_clean_exit(pars, 1, "Error\nMalloc failure\n");
+        }
 		j = 0;
 		while (map[i][j])
 		{
@@ -72,7 +75,7 @@ char **normalize_map(char **map)
 	return (norm_map);
 }
 
-bool validate_characters(char **map)
+bool validate_characters(t_parsing *pars, char **map)
 {
 	int	 i;
 	int	 j;
@@ -91,7 +94,7 @@ bool validate_characters(char **map)
 			if (c != '1' && c != '0' && c != 'N' && c != 'S' && c != 'E' &&
 				c != 'W' && c != ' ')
 			{
-				printf("Invalid character '%c' found in %d %d\n", c, i, j);
+				printf("Invalid character '%c' found in %d %d\n", c, i + pars->map_start, j + pars->map_start);
 				result = false;
 			}
 			if (c == 'N' || c == 'S' || c == 'E' || c == 'W')
@@ -100,9 +103,9 @@ bool validate_characters(char **map)
 		}
 		i++;
 	}
-	if (spawn != 1 || !result)
-		return false;
-	return true;
+	if (spawn != 1)
+        parse_clean_exit(pars, 1, "Error\nMap has to contain exactly 1 spawn");
+	return result;
 }
 
 bool flood_fill(char **map, int x, int y, int rows, int col)
@@ -145,17 +148,34 @@ bool check_walls(char **norm_map, int rows, int col)
 	return true;
 }
 
-bool validate_map(t_parsing *pars, char **map)
+void    fill_map(t_parsing *pars)
 {
-    int i = 0;
-	if (!validate_characters(map))
-		return (false);
-	char **norm_map = normalize_map(map);
-	if (!check_walls(norm_map, count_rows(norm_map), find_longest(norm_map)))
-		printf("Error with walls\n");
-	printf("Normalized map\n");
-	int i = -1;
-	while (map[++i])
-		printf("%s\n", norm_map[i]);
-	return (true);
+    int i;
+    int j;
+
+    i = 0;
+    while (pars->norm_map[i])
+    {
+        j = 0;
+        while (pars->norm_map[i][j])
+        {
+            if (pars->norm_map[i][j] == ' ')
+                pars->norm_map[i][j] = '1';
+            if (pars->norm_map[i][j] == '.')
+                pars->norm_map[i][j] = '0';
+            j++;
+        }
+        i++;
+    }
+}
+
+void validate_map(t_parsing *pars, char **map)
+{
+	if (!validate_characters(pars, map))
+        parse_clean_exit(pars, 1, NULL);
+	pars->norm_map = normalize_map(pars, map);
+	if (!check_walls(pars->norm_map, count_rows(pars->norm_map), find_longest(pars->norm_map)))
+		parse_clean_exit(pars, 1, NULL);
+    fill_map(pars);
+    free_array(&pars->map);
 }
