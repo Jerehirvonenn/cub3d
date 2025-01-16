@@ -16,7 +16,7 @@ void free_and_null(char **str)
 	}
 }
 
-void parse_clean_exit(t_parsing *parse, int exit_code)
+void parse_clean_exit(t_parsing *parse, int exit_code, char *str)
 {
 	free_and_null(&parse->north);
 	free_and_null(&parse->south);
@@ -29,6 +29,8 @@ void parse_clean_exit(t_parsing *parse, int exit_code)
 		free(parse->map);
 		parse->map = NULL;
 	}
+    if (str)
+        ft_putstr_fd(str, 2);
 	if (exit_code != 0)
 		exit(exit_code);
 }
@@ -67,49 +69,58 @@ void parse_color(char *str, int *color, t_parsing *parse)
 	i = 0;
 	index = 0;
 	if (color[0] != -1)
-	{
-		ft_putstr_fd("Error\nDuplicate color in assignment\n", 2);
-		parse_clean_exit(parse, 1);
-	}
+		parse_clean_exit(parse, 1, "Error\nDuplicate color in assignment\n");
 	while (str[i])
 	{
 		if (index == 3)
-		{
-			ft_putstr_fd("Error\nToo many colors assigned\n", 2);
-			parse_clean_exit(parse, 1);
-		}
+			parse_clean_exit(parse, 1, "Error\nToo many colors assigned\n");
 		color[index++] = ft_atoi_color(str, &i);
 		if (color[index - 1] == -1)
-		{
-			ft_putstr_fd("Error\nColor value missin or not in range 0-255\n",
-						 2);
-			parse_clean_exit(parse, 1);
-		}
+			parse_clean_exit(parse, 1, "Error\nToo many colors assigned\n");
 		while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
 			i++;
 		if (str[i] == ',')
 			i++;
 	}
 	if (index != 3)
-	{
-		ft_putstr_fd("Error\nInvalid number of color values\n", 2);
-		parse_clean_exit(parse, 1);
-	}
+		parse_clean_exit(parse, 1, "Error\nInvalid number of color values\n");
 }
 
-void check_and_set_texture(char **texture, const char *value, t_parsing *pars)
+char *ft_strdup_trim(char *s)
+{
+    int start;
+    int end;
+    char *result;
+    int len;
+
+    start = 0;
+    while (s[start] && s[start] == ' ')
+        start++;
+    end = ft_strlen(s) - 1;
+    while (end > start && s[end] == ' ')
+        end--;
+    if (end >= start)
+        len = end - start + 1;
+    else
+        len = 0; // maybe just insta quit?
+    result = (char *)malloc(len + 1);
+    if (!result)
+        return (NULL);
+    len = 0;
+    while (start <= end)
+        result[len++] = s[start++];
+    result[len] = 0;
+
+    return (result);
+}
+
+void check_and_set_texture(char **texture, char *value, t_parsing *pars)
 {
 	if (*texture)
-	{
-		ft_putstr_fd("Error\nDuplicate texture assignment\n", 2);
-		parse_clean_exit(pars, 1);
-	}
-	*texture = ft_strdup(value);
+		parse_clean_exit(pars, 1, "Error\nDuplicate texture assignment\n");
+	*texture = ft_strdup_trim(value);
 	if (!*texture)
-	{
-		ft_putstr_fd("Error\nMalloc failure\n", 2);
-		parse_clean_exit(pars, 1);
-	}
+		parse_clean_exit(pars, 1, "Error\nMalloc failure\n");
 }
 
 void check_str(char *str, t_parsing *pars)
@@ -134,10 +145,7 @@ void check_str(char *str, t_parsing *pars)
 	else if (str[i] == 'C' && str[i + 1] == ' ')
 		parse_color(str + i + 2, pars->ceiling, pars);
 	else
-	{
-		ft_putstr_fd("Error\nInvalid identifier encoutnered\n", 2);
-		parse_clean_exit(pars, 1);
-	}
+		parse_clean_exit(pars, 1, "Error\nInvalid identifier encoutnered\n");
 }
 
 bool all_filled(t_parsing *pars)
@@ -158,15 +166,13 @@ int skip_empty_lines(t_parsing *pars, char **map, int i)
 	while (map[i])
 	{
 		j = 0;
-		while (map[i][j] == ' ') // need tocheck all whitespace?
+		while (map[i][j] == ' ')
 			j++;
 		if (map[i][j])
 			return i;
 		i++;
 	}
-	// theres no map to check, its invalid
-	ft_putstr_fd("Error\nNo possible map to check", 2);
-	parse_clean_exit(pars, 1);
+	parse_clean_exit(pars, 1, "Error\nNo possible map to check\n");
 	return (0);
 }
 
@@ -185,11 +191,9 @@ void gather_data(t_parsing *pars, char **map)
 			return ;
 		}
 	}
-	ft_putstr_fd("Error\nNot all needed data available in file", 2);
-	parse_clean_exit(pars, 1);
+	parse_clean_exit(pars, 1, "Error\nNot all needed data available in file\n");
 }
 
-// debug
 void print_parsing(const t_parsing *parsing)
 {
 	if (!parsing)
@@ -208,53 +212,24 @@ void print_parsing(const t_parsing *parsing)
 	printf("Ceiling Color: %d, %d, %d\n", parsing->ceiling[0],
 		   parsing->ceiling[1], parsing->ceiling[2]);
 
-	printf("Map:\n");
+	printf("Map:\n")\n;
 	if (parsing->map)
 		for (int i = 0; parsing->map[i]; i++)
 			printf("  %s\n", parsing->map[i]);
 	else
-		printf("  Map is not set.\n");
+		printf("Map is not set.\n");
 }
 
 bool validate_map(t_parsing *pars, char **map)
 {
-	printf("MAP FIRST LINE IS %s\n", map[0]);
 	if (!validate_characters(map))
 		return (false);
 	char **norm_map = normalize_map(map);
 	if (!check_walls(norm_map, count_rows(norm_map), find_longest(norm_map)))
 		printf("Error with walls\n");
-
 	printf("Normalized map\n");
 	int i = -1;
 	while (map[++i])
 		printf("%s\n", norm_map[i]);
 	return (true);
 }
-/*
-int main(int ac, char **av)
-{
-	if (ac < 2)
-		return (1);
-	ac--;
-	av++;
-
-	t_parsing pars;
-	pars.north = NULL;
-	pars.south = NULL;
-	pars.east = NULL;
-	pars.west = NULL;
-	pars.map = NULL;
-	pars.floor[0] = -1;
-	pars.floor[1] = -1;
-	pars.floor[2] = -1;
-	pars.ceiling[0] = -1;
-	pars.ceiling[1] = -1;
-	pars.ceiling[2] = -1;
-	pars.map_start = 0;
-	pars.map = NULL;
-	gather_data(&pars, av);
-	print_parsing(&pars);
-	if (!validate_map(&pars, av + pars.map_start))
-		printf("Map validation Failed\n");
-}*/
