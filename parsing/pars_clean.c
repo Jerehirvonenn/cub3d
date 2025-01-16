@@ -1,5 +1,15 @@
 #include "parsing.h"
 
+void free_close(t_parsing *pars, char *s, char *free_str)
+{
+	if (s)
+		ft_putstr_fd(s, 2);
+	if (pars->fd > 0)
+		close(pars->fd);
+	free(free_str);
+	exit(1);
+}
+
 void free_array(char ***array)
 {
 	int i;

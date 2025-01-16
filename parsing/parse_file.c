@@ -1,15 +1,5 @@
 #include "parsing.h"
 
-void    free_close(t_parsing *pars, char *s, char *free_str)
-{
-    if (s)
-        ft_putstr_fd(s, 2);
-    if (pars->fd > 0)
-        close(pars->fd);
-    free(free_str);
-    exit(1);
-}
-
 char *grow_buffer(char *old_buffer, int old_size, int new_size, t_parsing *pars)
 {
 	char *new_buffer;
@@ -19,7 +9,7 @@ char *grow_buffer(char *old_buffer, int old_size, int new_size, t_parsing *pars)
 	if (!new_buffer)
 	{
 		perror("Memory allocation failed");
-        close(pars->fd);
+		close(pars->fd);
 		free(old_buffer);
 		exit(1);
 	}
@@ -62,7 +52,7 @@ void read_file(t_parsing *pars)
 		buffer[b_read] = 0;
 	}
 	if (b_read < 0)
-        free_close(pars, "Error\nError while reading file\n", pars->cont);
+		free_close(pars, "Error\nError while reading file\n", pars->cont);
 	close(pars->fd);
 	pars->cont[size] = 0;
 	printf("Map in string form\n%s", pars->cont);
