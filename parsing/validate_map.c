@@ -1,22 +1,10 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "parsing.h"
 
 /*
  * 0 .normalize map so each row is max length
  * 1. check the map for only 1, 0, one spawn or spaces
  * 2. floodfill from 0 and starting points to see its walled
  */
-
-int ft_strlen(char *s)
-{
-	int i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return i;
-}
 
 int count_rows(char **map)
 {
@@ -47,10 +35,6 @@ int find_longest(char **map)
 	return (longest);
 }
 
-/*
- * 1.find the longest row
- * 2.normalize the others to same size with ' ' padding.
- * */
 char **normalize_map(char **map)
 {
 	int	   i;
@@ -159,4 +143,19 @@ bool check_walls(char **norm_map, int rows, int col)
 		i++;
 	}
 	return true;
+}
+
+bool validate_map(t_parsing *pars, char **map)
+{
+    int i = 0;
+	if (!validate_characters(map))
+		return (false);
+	char **norm_map = normalize_map(map);
+	if (!check_walls(norm_map, count_rows(norm_map), find_longest(norm_map)))
+		printf("Error with walls\n");
+	printf("Normalized map\n");
+	int i = -1;
+	while (map[++i])
+		printf("%s\n", norm_map[i]);
+	return (true);
 }

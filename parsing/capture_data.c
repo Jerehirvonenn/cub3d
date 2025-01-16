@@ -1,40 +1,5 @@
 #include "parsing.h"
 
-bool false_message(char *str)
-{
-	if (str)
-		ft_putstr_fd(str, 2);
-	return false;
-}
-
-void free_and_null(char **str)
-{
-	if (*str)
-	{
-		free(*str);
-		*str = NULL;
-	}
-}
-
-void parse_clean_exit(t_parsing *parse, int exit_code, char *str)
-{
-	free_and_null(&parse->north);
-	free_and_null(&parse->south);
-	free_and_null(&parse->west);
-	free_and_null(&parse->east);
-	if (parse->map)
-	{
-		for (int i = 0; parse->map[i]; i++)
-			free_and_null(&parse->map[i]);
-		free(parse->map);
-		parse->map = NULL;
-	}
-    if (str)
-        ft_putstr_fd(str, 2);
-	if (exit_code != 0)
-		exit(exit_code);
-}
-
 int ft_atoi_color(const char *str, int *j)
 {
 	int i;
@@ -192,44 +157,4 @@ void gather_data(t_parsing *pars, char **map)
 		}
 	}
 	parse_clean_exit(pars, 1, "Error\nNot all needed data available in file\n");
-}
-
-void print_parsing(const t_parsing *parsing)
-{
-	if (!parsing)
-	{
-		printf("Parsing structure is NULL.\n");
-		return;
-	}
-
-	printf("North Texture: %s\n", parsing->north ? parsing->north : "Not set");
-	printf("South Texture: %s\n", parsing->south ? parsing->south : "Not set");
-	printf("West Texture: %s\n", parsing->west ? parsing->west : "Not set");
-	printf("East Texture: %s\n", parsing->east ? parsing->east : "Not set");
-
-	printf("Floor Color: %d, %d, %d\n", parsing->floor[0], parsing->floor[1],
-		   parsing->floor[2]);
-	printf("Ceiling Color: %d, %d, %d\n", parsing->ceiling[0],
-		   parsing->ceiling[1], parsing->ceiling[2]);
-
-	printf("Map:\n")\n;
-	if (parsing->map)
-		for (int i = 0; parsing->map[i]; i++)
-			printf("  %s\n", parsing->map[i]);
-	else
-		printf("Map is not set.\n");
-}
-
-bool validate_map(t_parsing *pars, char **map)
-{
-	if (!validate_characters(map))
-		return (false);
-	char **norm_map = normalize_map(map);
-	if (!check_walls(norm_map, count_rows(norm_map), find_longest(norm_map)))
-		printf("Error with walls\n");
-	printf("Normalized map\n");
-	int i = -1;
-	while (map[++i])
-		printf("%s\n", norm_map[i]);
-	return (true);
 }
