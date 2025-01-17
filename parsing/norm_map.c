@@ -1,11 +1,9 @@
 #include "parsing.h"
 
-#include <stdlib.h>
-
-static char *normalize_row(t_parsing *pars, char *row, int longest)
+static char	*normalize_row(t_parsing *pars, char *row, int longest)
 {
-	char *norm_row;
-	int	  j;
+	char	*norm_row;
+	int		j;
 
 	j = 0;
 	norm_row = (char *)malloc(sizeof(char) * (longest + 1));
@@ -22,15 +20,15 @@ static char *normalize_row(t_parsing *pars, char *row, int longest)
 		j++;
 	}
 	norm_row[j] = 0;
-	return norm_row;
+	return (norm_row);
 }
 
-char **normalize_map(t_parsing *pars, char **map)
+char	**normalize_map(t_parsing *pars, char **map)
 {
-	int	   i;
-	int	   longest;
-	int	   rows;
-	char **norm_map;
+	int		i;
+	int		longest;
+	int		rows;
+	char	**norm_map;
 
 	rows = count_rows(map);
 	longest = find_longest(map);
@@ -45,5 +43,5 @@ char **normalize_map(t_parsing *pars, char **map)
 		norm_map[i] = normalize_row(pars, map[i], longest);
 		i++;
 	}
-	return norm_map;
+	return (norm_map);
 }

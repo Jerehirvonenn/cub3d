@@ -1,13 +1,13 @@
 #include "parsing.h"
 
-void parse_file(t_parsing *pars)
+void	parse_file(t_parsing *pars)
 {
 	validate_file(pars);
 	gather_data(pars, pars->map);
 	validate_map(pars, pars->map + pars->map_start);
 }
 
-void init_pars_struct(t_parsing *pars, char *file)
+void	init_pars_struct(t_parsing *pars, char *file)
 {
 	pars->file = file;
 	pars->cont = NULL;
@@ -27,9 +27,9 @@ void init_pars_struct(t_parsing *pars, char *file)
 	pars->map_start = -1;
 }
 
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
-	t_parsing pars;
+	t_parsing	pars;
 
 	if (ac < 2)
 	{

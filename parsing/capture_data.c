@@ -1,6 +1,6 @@
 #include "parsing.h"
 
-void check_and_set_texture(char **texture, char *value, t_parsing *pars)
+void	check_and_set_texture(char **texture, char *value, t_parsing *pars)
 {
 	if (*texture)
 		parse_clean_exit(pars, 1, "Error\nDuplicate texture assignment\n");
@@ -9,15 +9,15 @@ void check_and_set_texture(char **texture, char *value, t_parsing *pars)
 		parse_clean_exit(pars, 1, "Error\nMalloc failure\n");
 }
 
-void check_str(char *str, t_parsing *pars)
+void	check_str(char *str, t_parsing *pars)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i] == ' ')
 		i++;
 	if (ft_strlen(str + i) == 0)
-		return;
+		return ;
 	if (ft_strncmp(str + i, "NO ", 3) == 0)
 		check_and_set_texture(&pars->north, str + i + 3, pars);
 	else if (ft_strncmp(str + i, "SO ", 3) == 0)
@@ -34,19 +34,22 @@ void check_str(char *str, t_parsing *pars)
 		parse_clean_exit(pars, 1, "Error\nInvalid identifier encoutnered\n");
 }
 
-bool all_filled(t_parsing *pars)
+bool	all_filled(t_parsing *pars)
 {
+	int	i;
+
 	if (!pars->north || !pars->south || !pars->west || !pars->east)
-		return false;
-	for (int i = 0; i < 3; i++)
+		return (false);
+	i = -1;
+	while (++i < 3)
 		if (pars->floor[i] < 0 || pars->ceiling[i] < 0)
-			return false;
-	return true;
+			return (false);
+	return (true);
 }
 
-int skip_empty_lines(t_parsing *pars, char **map, int i)
+int	skip_empty_lines(t_parsing *pars, char **map, int i)
 {
-	int j;
+	int	j;
 
 	j = 0;
 	while (map[i])
@@ -55,16 +58,16 @@ int skip_empty_lines(t_parsing *pars, char **map, int i)
 		while (map[i][j] == ' ')
 			j++;
 		if (map[i][j])
-			return i;
+			return (i);
 		i++;
 	}
 	parse_clean_exit(pars, 1, "Error\nNo possible map to check\n");
 	return (0);
 }
 
-void gather_data(t_parsing *pars, char **map)
+void	gather_data(t_parsing *pars, char **map)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (map[++i])
@@ -74,7 +77,7 @@ void gather_data(t_parsing *pars, char **map)
 		{
 			printf("Everything filled\n");
 			pars->map_start = skip_empty_lines(pars, map, i + 1);
-			return;
+			return ;
 		}
 	}
 	parse_clean_exit(pars, 1, "Error\nNot all needed data available in file\n");

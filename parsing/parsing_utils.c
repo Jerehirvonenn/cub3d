@@ -1,11 +1,11 @@
 #include "parsing.h"
 
-char *ft_strdup_trim(char *s)
+char	*ft_strdup_trim(char *s)
 {
-	int	  start;
-	int	  end;
-	char *result;
-	int	  len;
+	int		start;
+	int		end;
+	int		len;
+	char	*result;
 
 	start = 0;
 	while (s[start] && s[start] == ' ')
@@ -16,7 +16,7 @@ char *ft_strdup_trim(char *s)
 	if (end >= start)
 		len = end - start + 1;
 	else
-		len = 0; // maybe just insta quit?
+		len = 0;
 	result = (char *)malloc(len + 1);
 	if (!result)
 		return (NULL);
@@ -24,13 +24,12 @@ char *ft_strdup_trim(char *s)
 	while (start <= end)
 		result[len++] = s[start++];
 	result[len] = 0;
-
 	return (result);
 }
 
-int count_rows(char **map)
+int	count_rows(char **map)
 {
-	int rows;
+	int	rows;
 
 	rows = 0;
 	while (map[rows])
@@ -38,11 +37,11 @@ int count_rows(char **map)
 	return (rows);
 }
 
-int find_longest(char **map)
+int	find_longest(char **map)
 {
-	int i;
-	int longest;
-	int current;
+	int	i;
+	int	longest;
+	int	current;
 
 	i = 0;
 	longest = 0;
@@ -57,10 +56,10 @@ int find_longest(char **map)
 	return (longest);
 }
 
-void fill_map(t_parsing *pars)
+void	fill_map(t_parsing *pars)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (pars->norm_map[i])
@@ -78,19 +77,23 @@ void fill_map(t_parsing *pars)
 	}
 }
 
-bool flood_fill(char **map, int x, int y, int rows, int col)
+bool	flood_fill(char **map, int x, int y, int rows)
 {
+	int	col;
+
+	if (map[x])
+		col = ft_strlen(map[x]);
 	if (x < 0 || x >= rows || y < 0 || y >= col || map[x][y] == ' ')
 	{
 		printf("Escaped to %d %d\n", x, y);
-		return false;
+		return (false);
 	}
 	if (map[x][y] == '.' || map[x][y] == '1')
-		return true;
+		return (true);
 	if (map[x][y] == '0')
 		map[x][y] = '.';
-	return (flood_fill(map, x + 1, y, rows, col) &&
-			flood_fill(map, x - 1, y, rows, col) &&
-			flood_fill(map, x, y + 1, rows, col) &&
-			flood_fill(map, x, y - 1, rows, col));
+	return (flood_fill(map, x + 1, y, rows)
+		&& flood_fill(map, x - 1, y, rows)
+		&& flood_fill(map, x, y + 1, rows)
+		&& flood_fill(map, x, y - 1, rows));
 }

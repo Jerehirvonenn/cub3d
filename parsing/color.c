@@ -1,35 +1,35 @@
 #include "parsing.h"
 
-static int ft_atoi_color(const char *str, int *j)
+static int	ft_atoi_color(const char *str, int *j)
 {
-	int i;
-	int result;
+	int	i;
+	int	result;
 
 	result = -1;
 	i = *j;
 	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
 		i++;
 	if (str[i] == '\0')
-		return -1;
+		return (-1);
 	if (str[i] >= '0' && str[i] <= '9')
 		result = 0;
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		result = result * 10 + (str[i] - '0');
 		if (result > 255)
-			return -1;
+			return (-1);
 		i++;
 	}
 	if (str[i] != '\0' && str[i] != ',')
-		return -1;
+		return (-1);
 	*j = i;
-	return result;
+	return (result);
 }
 
-void parse_color(char *str, int *color, t_parsing *parse)
+void	parse_color(char *str, int *color, t_parsing *parse)
 {
-	int index;
-	int i;
+	int	index;
+	int	i;
 
 	i = 0;
 	index = 0;

@@ -40,7 +40,7 @@ bool validate_characters(t_parsing *pars, char **map)
 	return result;
 }
 
-bool check_walls(char **norm_map, int rows, int col)
+bool check_walls(char **norm_map, int rows)
 {
 	int i;
 	int j;
@@ -54,7 +54,7 @@ bool check_walls(char **norm_map, int rows, int col)
 			if (norm_map[i][j] == '0' || norm_map[i][j] == 'N' ||
 				norm_map[i][j] == 'S' || norm_map[i][j] == 'E' ||
 				norm_map[i][j] == 'W')
-				if (!flood_fill(norm_map, i, j, rows, col))
+				if (!flood_fill(norm_map, i, j, rows))
 					return false;
 			j++;
 		}
@@ -68,8 +68,7 @@ void validate_map(t_parsing *pars, char **map)
 	if (!validate_characters(pars, map))
 		parse_clean_exit(pars, 1, NULL);
 	pars->norm_map = normalize_map(pars, map);
-	if (!check_walls(pars->norm_map, count_rows(pars->norm_map),
-					 find_longest(pars->norm_map)))
+	if (!check_walls(pars->norm_map, count_rows(pars->norm_map)))
 		parse_clean_exit(pars, 1, NULL);
 	fill_map(pars);
 	free_array(&pars->map);
