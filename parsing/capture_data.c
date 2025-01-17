@@ -75,7 +75,6 @@ void	gather_data(t_parsing *pars, char **map)
 		check_str(map[i], pars);
 		if (all_filled(pars))
 		{
-			printf("Everything filled\n");
 			pars->map_start = skip_empty_lines(pars, map, i + 1);
 			return ;
 		}

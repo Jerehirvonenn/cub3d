@@ -81,7 +81,7 @@ bool	flood_fill(char **map, int x, int y, int rows)
 {
 	int	col;
 
-	if (map[x])
+	if (x > 0 && map[x])
 		col = ft_strlen(map[x]);
 	if (x < 0 || x >= rows || y < 0 || y >= col || map[x][y] == ' ')
 	{

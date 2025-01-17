@@ -8,7 +8,7 @@ char	*grow_buffer(char *old, int len, int new_size, t_parsing *pars)
 	new_buffer = malloc(new_size);
 	if (!new_buffer)
 	{
-		perror("Memory allocation failed");
+		ft_putstr_fd("Error\nMalloc failure\n", 2);
 		close(pars->fd);
 		free(old);
 		exit(1);
@@ -55,7 +55,6 @@ void	read_file(t_parsing *pars)
 		free_close(pars, "Error\nError while reading file\n", pars->cont);
 	close(pars->fd);
 	pars->cont[size] = 0;
-	printf("Map in string form\n%s", pars->cont);
 }
 
 void	validate_file(t_parsing *pars)
@@ -70,8 +69,8 @@ void	validate_file(t_parsing *pars)
 	pars->map = ft_split(pars->cont, '\n');
 	free(pars->cont);
 	if (!pars->map)
-		exit(1); // message
-	printf("\nAFTER SPLIT\n");
-	for (int i = 0; pars->map[i]; i++)
-		printf("%s\n", pars->map[i]);
+	{
+		ft_putstr_fd("Error\nMalloc failure\n", 2);
+		exit(1);
+	}
 }
