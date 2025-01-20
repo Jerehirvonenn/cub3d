@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jhirvone <jhirvone@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/20 12:51:56 by jhirvone          #+#    #+#             */
+/*   Updated: 2025/01/20 12:55:26 by jhirvone         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PARSING_H
 # define PARSING_H
 
@@ -43,7 +55,7 @@ char	**normalize_map(t_parsing *pars, char **map);
 void	parse_color(char *str, int *color, t_parsing *parse);
 
 // utils
-char	*ft_strdup_trim(t_parsing * pars, char *s);
+char	*ft_strdup_trim(t_parsing *pars, char *s);
 int		count_rows(char **map);
 int		find_longest(char **map);
 bool	flood_fill(char **map, int x, int y, int rows);
@@ -54,8 +66,5 @@ void	free_array(char ***array);
 void	free_close(t_parsing *pars, char *s, char *free_str);
 void	free_and_null(char **str);
 void	parse_clean_exit(t_parsing *parse, int exit_code, char *str);
-
-// debug
-void	print_parsing(const t_parsing *parsing);
 void	free_array(char ***array);
 #endif

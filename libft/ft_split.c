@@ -6,15 +6,15 @@
 /*   By: jhirvone <jhirvone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 11:29:35 by jhirvone          #+#    #+#             */
-/*   Updated: 2025/01/20 11:47:47 by jhirvone         ###   ########.fr       */
+/*   Updated: 2025/01/20 13:40:54 by jhirvone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static void *free_array(char **array, int n)
+static void	*free_array(char **array, int n)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i <= n)
@@ -26,10 +26,10 @@ static void *free_array(char **array, int n)
 	return (0);
 }
 
-static int count_words(const char *str, char sepa)
+static int	count_words(const char *str, char sepa)
 {
-	int i;
-	int words;
+	int	i;
+	int	words;
 
 	i = 0;
 	words = 0;
@@ -37,7 +37,7 @@ static int count_words(const char *str, char sepa)
 	{
 		if (str[i] != sepa && (str[i + 1] == sepa || str[i + 1] == 0))
 			words++;
-		else if	(i == 0 && str[i] == sepa)
+		else if (i == 0 && str[i] == sepa)
 			words++;
 		else if (str[i] == sepa && (str[i + 1] == sepa || str[i + 1] == 0))
 			words++;
@@ -46,45 +46,53 @@ static int count_words(const char *str, char sepa)
 	return (words);
 }
 
-static char **ft_merge(char **strs, const char *str, char sepa, int words)
+static int	ft_process_word(char **strs, const char *str, char sepa, int *state)
 {
-	int i;
-	int j;
-	int n;
+	int	j;
 
-	i = 0;
-	n = 0;
-	while (str[i] && n < words)
+	j = 0;
+	while (str[state[0] + j] != sepa && str[state[0] + j])
+		j++;
+	strs[state[1]] = ft_substr(str, state[0], j);
+	if (!(strs[state[1]]))
+		return (0);
+	state[0] += j;
+	state[1]++;
+	return (1);
+}
+
+// state[0] = i, state[1] = n
+static char	**ft_merge(char **strs, const char *str, char sepa, int words)
+{
+	int	state[2];
+
+	state[0] = 0;
+	state[1] = 0;
+	while (str[state[0]] && state[1] < words)
 	{
-		if (str[i] == sepa)
+		if (str[state[0]] == sepa)
 		{
-			if (i == 0 || str[i - 1] == sepa)
+			if (state[0] == 0 || str[state[0] - 1] == sepa)
 			{
-				strs[n] = ft_strdup("");
-				if (!(strs[n]))
-					return (free_array(strs, n));
-				n++;
+				strs[state[1]] = ft_strdup("");
+				if (!(strs[state[1]]))
+					return (free_array(strs, state[1]));
+				state[1]++;
 			}
-			i++;
-			continue;
+			state[0]++;
+			continue ;
 		}
-		j = 0;
-		while (str[i + j] != sepa && str[i + j])
-			j++;
-		strs[n] = ft_substr(str, i, j);
-		if (!(strs[n]))
-			return (free_array(strs, n));
-		n++;
-		i += j;
+		if (!ft_process_word(strs, str, sepa, state))
+			return (free_array(strs, state[1]));
 	}
-	strs[n] = 0;
+	strs[state[1]] = 0;
 	return (strs);
 }
 
-char **ft_split(char const *s, char c)
+char	**ft_split(char const *s, char c)
 {
-	int	   words;
-	char **strs;
+	char	**strs;
+	int		words;
 
 	words = count_words(s, c);
 	strs = (char **)malloc(sizeof(char *) * (words + 1));

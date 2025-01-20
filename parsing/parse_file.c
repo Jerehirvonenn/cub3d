@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_file.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jhirvone <jhirvone@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/20 12:51:52 by jhirvone          #+#    #+#             */
+/*   Updated: 2025/01/20 13:27:06 by jhirvone         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parsing.h"
 
 char	*grow_buffer(char *old, int len, int new_size, t_parsing *pars)
@@ -24,16 +36,18 @@ char	*grow_buffer(char *old, int len, int new_size, t_parsing *pars)
 	return (new_buffer);
 }
 
-void	read_file(t_parsing *pars)
+void	ft_save_lines(t_parsing *pars, int *capacity, int *size)
+{
+	*capacity *= 2;
+	pars->cont = grow_buffer(pars->cont, *size, *capacity, pars);
+}
+
+void	read_file(t_parsing *pars, int capacity, int size)
 {
 	char	buffer[BUFFER_SIZE + 1];
 	int		b_read;
-	int		size;
-	int		capacity;
 	int		i;
 
-	capacity = BUFFER_SIZE + 1;
-	size = 0;
 	pars->cont = malloc(sizeof(char) * BUFFER_SIZE + 1);
 	if (!pars->cont)
 		free_close(pars, "Error\nMalloc failure\n", NULL);
@@ -43,12 +57,9 @@ void	read_file(t_parsing *pars)
 	while (b_read > 0)
 	{
 		if (size + b_read >= capacity)
-		{
-			capacity *= 2;
-			pars->cont = grow_buffer(pars->cont, size, capacity, pars);
-		}
+			ft_save_lines(pars, &capacity, &size);
 		i = -1;
-		while  (++i < b_read)
+		while (++i < b_read)
 			pars->cont[size++] = buffer[i];
 		b_read = read(pars->fd, buffer, BUFFER_SIZE);
 		buffer[b_read] = 0;
@@ -61,19 +72,24 @@ void	read_file(t_parsing *pars)
 
 void	check_file_name(char *str)
 {
-	int i;
+	int	i;
 
 	i = ft_strlen(str) - 1;
 	while (i >= 0 && str[i] != '.')
 		i--;
 	if (!ft_strncmp(str + i, ".cub", 5))
-			return ;
+		return ;
 	ft_putstr_fd("Error\nProvide .cub file\n", 2);
 	exit(1);
 }
 
 void	validate_file(t_parsing *pars)
 {
+	int	capacity;
+	int	size;
+
+	capacity = BUFFER_SIZE + 1;
+	size = 0;
 	check_file_name(pars->file);
 	pars->fd = open(pars->file, O_RDONLY);
 	if (pars->fd < 0)
@@ -81,7 +97,7 @@ void	validate_file(t_parsing *pars)
 		ft_putstr_fd("Error\nCannot open provided file\n", 2);
 		exit(1);
 	}
-	read_file(pars);
+	read_file(pars, capacity, size);
 	pars->map = ft_split(pars->cont, '\n');
 	free(pars->cont);
 	if (!pars->map)
