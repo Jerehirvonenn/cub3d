@@ -11,9 +11,7 @@ bool validate_characters(t_parsing *pars, char **map)
 	int	 i;
 	int	 j;
 	int	 spawn;
-	bool result;
 
-	result = true;
 	i = 0;
 	spawn = 0;
 	while (map[i])
@@ -24,11 +22,7 @@ bool validate_characters(t_parsing *pars, char **map)
 			char c = map[i][j];
 			if (c != '1' && c != '0' && c != 'N' && c != 'S' && c != 'E' &&
 				c != 'W' && c != ' ')
-			{
-				printf("Invalid character '%c' found in %d %d\n", c,
-					   i + pars->map_start, j + pars->map_start);
-				result = false;
-			}
+				return (false);
 			if (c == 'N' || c == 'S' || c == 'E' || c == 'W')
 				spawn++;
 			j++;
@@ -36,8 +30,8 @@ bool validate_characters(t_parsing *pars, char **map)
 		i++;
 	}
 	if (spawn != 1)
-		parse_clean_exit(pars, 1, "Error\nMap has to contain exactly 1 spawn");
-	return result;
+		parse_clean_exit(pars, 1, "Error\nMap has to contain exactly 1 spawn\n");
+	return (true);
 }
 
 bool check_walls(char **norm_map, int rows)
@@ -66,10 +60,10 @@ bool check_walls(char **norm_map, int rows)
 void validate_map(t_parsing *pars, char **map)
 {
 	if (!validate_characters(pars, map))
-		parse_clean_exit(pars, 1, NULL);
+		parse_clean_exit(pars, 1, "Error\nInvalid character in map\n");
 	pars->norm_map = normalize_map(pars, map);
 	if (!check_walls(pars->norm_map, count_rows(pars->norm_map)))
-		parse_clean_exit(pars, 1, NULL);
+		parse_clean_exit(pars, 1, "Error\nMap not Isolated with walls\n");
 	fill_map(pars);
 	free_array(&pars->map);
 }

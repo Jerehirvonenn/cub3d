@@ -4,7 +4,7 @@ void	check_and_set_texture(char **texture, char *value, t_parsing *pars)
 {
 	if (*texture)
 		parse_clean_exit(pars, 1, "Error\nDuplicate texture assignment\n");
-	*texture = ft_strdup_trim(value);
+	*texture = ft_strdup_trim(pars, value);
 	if (!*texture)
 		parse_clean_exit(pars, 1, "Error\nMalloc failure\n");
 }

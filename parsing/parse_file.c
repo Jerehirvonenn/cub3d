@@ -30,6 +30,7 @@ void	read_file(t_parsing *pars)
 	int		b_read;
 	int		size;
 	int		capacity;
+	int		i;
 
 	capacity = BUFFER_SIZE + 1;
 	size = 0;
@@ -46,7 +47,8 @@ void	read_file(t_parsing *pars)
 			capacity *= 2;
 			pars->cont = grow_buffer(pars->cont, size, capacity, pars);
 		}
-		for (ssize_t i = 0; i < b_read; i++)
+		i = -1;
+		while  (++i < b_read)
 			pars->cont[size++] = buffer[i];
 		b_read = read(pars->fd, buffer, BUFFER_SIZE);
 		buffer[b_read] = 0;
@@ -57,8 +59,22 @@ void	read_file(t_parsing *pars)
 	pars->cont[size] = 0;
 }
 
+void	check_file_name(char *str)
+{
+	int i;
+
+	i = ft_strlen(str) - 1;
+	while (i >= 0 && str[i] != '.')
+		i--;
+	if (!ft_strncmp(str + i, ".cub", 5))
+			return ;
+	ft_putstr_fd("Error\nProvide .cub file\n", 2);
+	exit(1);
+}
+
 void	validate_file(t_parsing *pars)
 {
+	check_file_name(pars->file);
 	pars->fd = open(pars->file, O_RDONLY);
 	if (pars->fd < 0)
 	{

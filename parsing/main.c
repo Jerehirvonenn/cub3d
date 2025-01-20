@@ -38,6 +38,5 @@ int	main(int ac, char **av)
 	}
 	init_pars_struct(&pars, av[1]);
 	parse_file(&pars);
-	print_parsing(&pars);
 	parse_clean_exit(&pars, 0, "Program finished succesfully\n");
 }

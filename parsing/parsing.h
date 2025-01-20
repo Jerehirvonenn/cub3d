@@ -43,7 +43,7 @@ char	**normalize_map(t_parsing *pars, char **map);
 void	parse_color(char *str, int *color, t_parsing *parse);
 
 // utils
-char	*ft_strdup_trim(char *s);
+char	*ft_strdup_trim(t_parsing * pars, char *s);
 int		count_rows(char **map);
 int		find_longest(char **map);
 bool	flood_fill(char **map, int x, int y, int rows);

@@ -1,6 +1,6 @@
 #include "parsing.h"
 
-char	*ft_strdup_trim(char *s)
+char	*ft_strdup_trim(t_parsing *pars, char *s)
 {
 	int		start;
 	int		end;
@@ -10,13 +10,14 @@ char	*ft_strdup_trim(char *s)
 	start = 0;
 	while (s[start] && s[start] == ' ')
 		start++;
+	if (!s[start])
+		parse_clean_exit(pars, 1, "Error\nTexture cannot be empty\n");
 	end = ft_strlen(s) - 1;
-	while (end > start && s[end] == ' ')
+	while (end >= start && s[end] == ' ')
 		end--;
-	if (end >= start)
-		len = end - start + 1;
-	else
-		len = 0;
+	if (end < start)
+		parse_clean_exit(pars, 1, "Error\nTexture cannot be empty\n");
+	len = end - start + 1;
 	result = (char *)malloc(len + 1);
 	if (!result)
 		return (NULL);
@@ -81,13 +82,12 @@ bool	flood_fill(char **map, int x, int y, int rows)
 {
 	int	col;
 
-	if (x > 0 && map[x])
+	if (x >= 0 && map[x])
 		col = ft_strlen(map[x]);
-	if (x < 0 || x >= rows || y < 0 || y >= col || map[x][y] == ' ')
-	{
-		printf("Escaped to %d %d\n", x, y);
+	else
 		return (false);
-	}
+	if (x < 0 || x >= rows || y < 0 || y >= col || map[x][y] == ' ')
+		return (false);
 	if (map[x][y] == '.' || map[x][y] == '1')
 		return (true);
 	if (map[x][y] == '0')
