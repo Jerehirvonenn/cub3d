@@ -53,16 +53,15 @@ void	read_file(t_parsing *pars, int capacity, int size)
 		free_close(pars, "Error\nMalloc failure\n", NULL);
 	pars->cont[0] = 0;
 	b_read = read(pars->fd, buffer, BUFFER_SIZE);
-	buffer[b_read] = 0;
 	while (b_read > 0)
 	{
+		buffer[b_read] = 0;
 		if (size + b_read >= capacity)
 			ft_save_lines(pars, &capacity, &size);
 		i = -1;
 		while (++i < b_read)
 			pars->cont[size++] = buffer[i];
 		b_read = read(pars->fd, buffer, BUFFER_SIZE);
-		buffer[b_read] = 0;
 	}
 	if (b_read < 0)
 		free_close(pars, "Error\nError while reading file\n", pars->cont);
